@@ -32,6 +32,12 @@ APlayerCharacter::APlayerCharacter()
 	{
 		LookAction = LookActionRef.Object;
 	}
+
+	static ConstructorHelpers::FObjectFinder<UInputAction> JumpActionRef(TEXT("/Script/EnhancedInput.InputAction'/Game/BossBattle/Input/Action/Jump.Jump'"));
+	if (JumpActionRef.Object)
+	{
+		JumpAction = JumpActionRef.Object;
+	}
 }
 
 void APlayerCharacter::BeginPlay()

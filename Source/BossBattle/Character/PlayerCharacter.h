@@ -37,8 +37,11 @@ protected:
 	UPROPERTY(EditAnywhere,BluePrintReadOnly,Category=Input,Meta=(AllowPrivateAccess="true"))
 	TObjectPtr<class UInputAction> MoveAction;
 
-	UPROPERTY(EditAnywhere, BluePrintReadOnly, Category = Input, Meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BluePrintReadOnly,Category=Input,Meta=(AllowPrivateAccess="true"))
 	TObjectPtr<class UInputAction> LookAction;
+
+	UPROPERTY(EditAnywhere, BluePrintReadOnly,Category=Input,Meta=(AllowPrivateAccess="true"))
+	TObjectPtr<class UInputAction> JumpAction;
 
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
