@@ -13,4 +13,7 @@ class BOSSBATTLE_API ACharacterBase : public ACharacter
 
 public:
 	ACharacterBase();
+
+	UPROPERTY(VisibleAnywhere,BluePrintReadOnly,Category=Equiqment,Meta=(AllowPrivateAccess))
+	TObjectPtr<class USkeletalMeshComponent> Weapon;
 };

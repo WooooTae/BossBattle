@@ -32,6 +32,9 @@ ACharacterBase::ACharacterBase()
 	{
 		GetMesh()->SetSkeletalMesh(CharacterMeshRef.Object);
 	}
+
+	Weapon = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Weapon"));
+	Weapon->SetupAttachment(GetMesh(), TEXT("Weapon"));
 }			
 
 

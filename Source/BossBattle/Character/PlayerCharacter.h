@@ -5,13 +5,15 @@
 #include "CoreMinimal.h"
 #include "CharacterBase.h"
 #include "InputActionValue.h"
+#include "AbilitySystemInterface.h"
+#include "Abilities/GameplayAbilityTypes.h"
 #include "PlayerCharacter.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class BOSSBATTLE_API APlayerCharacter : public ACharacterBase
+class BOSSBATTLE_API APlayerCharacter : public ACharacterBase,public IAbilitySystemInterface
 {
 	GENERATED_BODY()
 	
@@ -22,7 +24,24 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
+	virtual class UAbilitySystemComponent* GetAbilitySystemComponent() const override;
+	virtual void PossessedBy(AController* NewController) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+protected:
+	void SetupGASInputComponent();
+	void GASInputPressed(int32 InputId);
+	void GASInputReleased(int32 InputId);
+
+protected:
+	UPROPERTY(EditAnywhere,Category=GAS)
+	TObjectPtr<class UAbilitySystemComponent> ASC;
+
+	UPROPERTY(EditAnywhere,Category=GAS)
+	TArray<TSubclassOf<class UGameplayAbility>> StartAbilities;
+
+	UPROPERTY(EditAnywhere,Category=GAS)
+	TMap<int32, TSubclassOf<class UGameplayAbility>> StartInputAbilities;
 
 	//Camera
 protected:
@@ -48,4 +67,7 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 	TObjectPtr<class UInputMappingContext> InputMappingContext;
+
+	UPROPERTY(EditAnywhere,Category=Weapon)
+	TObjectPtr<class USkeletalMesh> WeaponMesh;
 };

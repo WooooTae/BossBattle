@@ -8,9 +8,14 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "BossBattle/Player/MyPlayerController.h"
+#include "Components/SkeletalMeshComponent.h"
+#include "AbilitySystemComponent.h"
+#include "BossBattle/Player/MyPlayerState.h"
 
 APlayerCharacter::APlayerCharacter()
 {
+	ASC = nullptr;
+
 	//Camera
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(RootComponent);
@@ -38,6 +43,13 @@ APlayerCharacter::APlayerCharacter()
 	{
 		JumpAction = JumpActionRef.Object;
 	}
+
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> WeaponMeshRef(TEXT("/Script/Engine.SkeletalMesh'/Game/KoreanTraditionalMartialArts/Meshs/Weapons/Meshs/SKM_Ssangsudo.SKM_Ssangsudo'"));
+	if (WeaponMeshRef.Object)
+	{
+		WeaponMesh = WeaponMeshRef.Object;
+		Weapon->SetSkeletalMesh(WeaponMeshRef.Object);
+	}	
 }
 
 void APlayerCharacter::BeginPlay()
@@ -58,6 +70,38 @@ void APlayerCharacter::BeginPlay()
 	}
 }
 
+UAbilitySystemComponent* APlayerCharacter::GetAbilitySystemComponent() const
+{
+	return ASC;
+}
+
+void APlayerCharacter::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+
+	AMyPlayerState* PS =  GetPlayerState<AMyPlayerState>();
+	if (PS)
+	{
+		ASC = PS->GetAbilitySystemComponent();
+		ASC->InitAbilityActorInfo(PS,this);
+
+		for (const auto& StartAbility : StartAbilities)
+		{
+			FGameplayAbilitySpec StartSpec(StartAbility);
+			ASC->GiveAbility(StartSpec);
+		}
+
+		for (const auto& StartInputAbility : StartInputAbilities)
+		{
+			FGameplayAbilitySpec StartSpec(StartInputAbility.Value);
+			StartSpec.InputID = StartInputAbility.Key;
+			ASC->GiveAbility(StartSpec);
+		}
+
+		APlayerController* PlayerController = CastChecked<APlayerController>(NewController);
+	}
+}
+
 void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
@@ -66,6 +110,38 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 	EnhancedInputComponent->BindAction(MoveAction,ETriggerEvent::Triggered,this,&APlayerCharacter::Move);
 	EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &APlayerCharacter::Look);
+	EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &APlayerCharacter::GASInputPressed, 0);
+	EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &APlayerCharacter::GASInputReleased, 0);
+}
+
+void APlayerCharacter::GASInputPressed(int32 InputId)
+{
+	FGameplayAbilitySpec* Spec = ASC->FindAbilitySpecFromInputID(InputId);
+	if (Spec)
+	{
+		Spec->InputPressed = true;
+		if (Spec->IsActive())
+		{
+			ASC->AbilitySpecInputPressed(*Spec);
+		}
+		else
+		{
+			ASC->TryActivateAbility(Spec->Handle);
+		}
+	}
+}
+
+void APlayerCharacter::GASInputReleased(int32 InputId)
+{
+	FGameplayAbilitySpec* Spec = ASC->FindAbilitySpecFromInputID(InputId);
+	if (Spec)
+	{
+		Spec->InputPressed = false;
+		if (Spec->IsActive())
+		{
+			ASC->AbilitySpecInputReleased(*Spec);
+		}
+	}
 }
 
 void APlayerCharacter::Move(const FInputActionValue& Value)
