@@ -19,6 +19,9 @@ class BOSSBATTLE_API APlayerCharacter : public ACharacterBase,public IAbilitySys
 	
 public:
 	APlayerCharacter();
+	FORCEINLINE class UAnimMontage* GetRollActionMontage() const {return RollActionMontage;}
+	FORCEINLINE class UAnimMontage* GetComboActionMontage() const { return ComboActionMontage;}
+	FORCEINLINE class UComboActionData* GetComboActionData() const {return ComboActionData;}
 
 protected:
 	virtual void BeginPlay() override;
@@ -56,18 +59,37 @@ protected:
 	UPROPERTY(EditAnywhere,BluePrintReadOnly,Category=Input,Meta=(AllowPrivateAccess="true"))
 	TObjectPtr<class UInputAction> MoveAction;
 
-	UPROPERTY(EditAnywhere, BluePrintReadOnly,Category=Input,Meta=(AllowPrivateAccess="true"))
+	UPROPERTY(EditAnywhere,BluePrintReadOnly,Category=Input,Meta=(AllowPrivateAccess="true"))
 	TObjectPtr<class UInputAction> LookAction;
 
-	UPROPERTY(EditAnywhere, BluePrintReadOnly,Category=Input,Meta=(AllowPrivateAccess="true"))
+	UPROPERTY(EditAnywhere,BluePrintReadOnly,Category=Input,Meta=(AllowPrivateAccess="true"))
 	TObjectPtr<class UInputAction> JumpAction;
+
+	UPROPERTY(EditAnywhere,BluePrintReadOnly,Category=Input,Meta=(AllowPrivateAccess="true"))
+	TObjectPtr<class UInputAction> RunAction;
+
+	UPROPERTY(EditAnywhere, BluePrintReadOnly,Category=Input,Meta=(AllowPrivateAccess="true"))
+	TObjectPtr<class UInputAction> AttackAction;
+
+	UPROPERTY(EditAnywhere,BluePrintReadOnly,Category=Input,Meta=(AllowPrivateAccess="true"))
+	TObjectPtr<class UInputAction> RollAction;
 
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
+	void RunaAndWalk(const FInputActionValue& Value);
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 	TObjectPtr<class UInputMappingContext> InputMappingContext;
 
 	UPROPERTY(EditAnywhere,Category=Weapon)
 	TObjectPtr<class USkeletalMesh> WeaponMesh;
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category=Animation)
+	TObjectPtr<class UAnimMontage> RollActionMontage;
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category=Animation)
+	TObjectPtr<class UAnimMontage> ComboActionMontage;
+
+	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category=Attack,Meta=(AllowPrivateAccess="true"))
+	TObjectPtr<class UComboActionData> ComboActionData;
 };
