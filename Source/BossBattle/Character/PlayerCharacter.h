@@ -19,6 +19,7 @@ class BOSSBATTLE_API APlayerCharacter : public ACharacterBase,public IAbilitySys
 	
 public:
 	APlayerCharacter();
+	FORCEINLINE class UAnimMontage* GetJumpActionMontage() const { return JumpActionMontage; }
 	FORCEINLINE class UAnimMontage* GetRollActionMontage() const {return RollActionMontage;}
 	FORCEINLINE class UAnimMontage* GetComboActionMontage() const { return ComboActionMontage;}
 	FORCEINLINE class UComboActionData* GetComboActionData() const {return ComboActionData;}
@@ -83,6 +84,9 @@ protected:
 
 	UPROPERTY(EditAnywhere,Category=Weapon)
 	TObjectPtr<class USkeletalMesh> WeaponMesh;
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category=Animation)
+	TObjectPtr<class UAnimMontage> JumpActionMontage;
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category=Animation)
 	TObjectPtr<class UAnimMontage> RollActionMontage;

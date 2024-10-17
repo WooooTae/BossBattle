@@ -38,21 +38,21 @@ APlayerCharacter::APlayerCharacter()
 	//Mesh
 	GetMesh()->SetRelativeLocationAndRotation(FVector(0.0f, 0.0f, -100.0f), FRotator(0.0f, -90.0f, 0.0f));
 
-	static ConstructorHelpers::FObjectFinder<USkeletalMesh> CharacterMeshRef(TEXT("/Script/Engine.SkeletalMesh'/Game/Paladin/Paladin_J_Nordstrom.Paladin_J_Nordstrom'"));
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> CharacterMeshRef(TEXT("/Script/Engine.SkeletalMesh'/Game/Plladin_RootBone/Paladin_J_Nordstrom.Paladin_J_Nordstrom'"));
 	if (CharacterMeshRef.Object)
 	{
 		GetMesh()->SetSkeletalMesh(CharacterMeshRef.Object);
 	}
 
-	Weapon = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Weapon"));
-	Weapon->SetupAttachment(GetMesh(), TEXT("Weapon"));
+	//Weapon = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Weapon"));
+	//Weapon->SetupAttachment(GetMesh(), TEXT("Weapon"));
 
-	static ConstructorHelpers::FObjectFinder<USkeletalMesh> WeaponMeshRef(TEXT("/Script/Engine.SkeletalMesh'/Game/KoreanTraditionalMartialArts/Meshs/Weapons/Meshs/SKM_Ssangsudo.SKM_Ssangsudo'"));
-	if (WeaponMeshRef.Object)
-	{
-		WeaponMesh = WeaponMeshRef.Object;
-		Weapon->SetSkeletalMesh(WeaponMeshRef.Object);
-	}	
+	//static ConstructorHelpers::FObjectFinder<USkeletalMesh> WeaponMeshRef(TEXT("/Script/Engine.SkeletalMesh'/Game/KoreanTraditionalMartialArts/Meshs/Weapons/Meshs/SKM_Ssangsudo.SKM_Ssangsudo'"));
+	//if (WeaponMeshRef.Object)
+	//{
+	//	WeaponMesh = WeaponMeshRef.Object;
+	//	Weapon->SetSkeletalMesh(WeaponMeshRef.Object);
+	//}	
 }
 
 void APlayerCharacter::BeginPlay()

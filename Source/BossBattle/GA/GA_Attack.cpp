@@ -87,7 +87,7 @@ void UGA_Attack::StartComboTimer()
 	const float ComboEffectiveTime = CurrentComboData->EffectiveFrameCount[ComboIndex] / CurrentComboData->FrameRate;
 	if (ComboEffectiveTime > 0.0f)
 	{
-		GetWorld()->GetTimerManager().SetTimer(ComboTimerHandle,this,&UGA_Attack::CheckComboInput, ComboEffectiveTime, false);
+		GetWorld()->GetTimerManager().SetTimer(ComboTimerHandle,this,&UGA_Attack::CheckComboInput,ComboEffectiveTime,false);
 	}
 }
 

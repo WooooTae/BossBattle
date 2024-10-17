@@ -4,6 +4,7 @@
 #include "AT_JumpAndWaitForLanding.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "BossBattle/Character/PlayerCharacter.h"
 
 UAT_JumpAndWaitForLanding::UAT_JumpAndWaitForLanding()
 {
@@ -20,9 +21,11 @@ void UAT_JumpAndWaitForLanding::Activate()
 {
 	Super::Activate();
 
-	ACharacter* Character = CastChecked<ACharacter>(GetAvatarActor());
+	APlayerCharacter* Character = CastChecked<APlayerCharacter>(GetAvatarActor());
 	Character->GetCharacterMovement()->JumpZVelocity = 500.0f;
+	JumpActionMontage = Character->GetJumpActionMontage();
 	Character->LandedDelegate.AddDynamic(this,&UAT_JumpAndWaitForLanding::OnLandedCallback);
+
 	Character->Jump();
 }
 

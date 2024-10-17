@@ -31,4 +31,8 @@ public:
 protected:
 	UFUNCTION()
 	void OnLandedCallback(const FHitResult& Hit);
+
+protected:
+	UPROPERTY()
+	TObjectPtr<class UAnimMontage> JumpActionMontage;
 };
