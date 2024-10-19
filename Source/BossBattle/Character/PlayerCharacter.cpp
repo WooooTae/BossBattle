@@ -30,7 +30,7 @@ APlayerCharacter::APlayerCharacter()
 	//Movement
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 500.0f, 0.0f);
-	GetCharacterMovement()->JumpZVelocity = 700.0f;
+	GetCharacterMovement()->JumpZVelocity = 350.0f;
 	GetCharacterMovement()->AirControl = 0.35f;
 	GetCharacterMovement()->MaxWalkSpeed = 500.0f;
 	GetCharacterMovement()->BrakingDecelerationWalking = 2000.0f;
@@ -44,15 +44,15 @@ APlayerCharacter::APlayerCharacter()
 		GetMesh()->SetSkeletalMesh(CharacterMeshRef.Object);
 	}
 
-	//Weapon = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Weapon"));
-	//Weapon->SetupAttachment(GetMesh(), TEXT("Weapon"));
+	Weapon = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Weapon"));
+	Weapon->SetupAttachment(GetMesh(), TEXT("Weapon"));
 
-	//static ConstructorHelpers::FObjectFinder<USkeletalMesh> WeaponMeshRef(TEXT("/Script/Engine.SkeletalMesh'/Game/KoreanTraditionalMartialArts/Meshs/Weapons/Meshs/SKM_Ssangsudo.SKM_Ssangsudo'"));
-	//if (WeaponMeshRef.Object)
-	//{
-	//	WeaponMesh = WeaponMeshRef.Object;
-	//	Weapon->SetSkeletalMesh(WeaponMeshRef.Object);
-	//}	
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> WeaponMeshRef(TEXT("/Script/Engine.SkeletalMesh'/Game/InfinityBladeWeapons/Weapons/Blade/Swords/Blade_HeroSword11/SK_Blade_HeroSword11.SK_Blade_HeroSword11'"));
+	if (WeaponMeshRef.Object)
+	{
+		WeaponMesh = WeaponMeshRef.Object;
+		Weapon->SetSkeletalMesh(WeaponMeshRef.Object);
+	}	
 }
 
 void APlayerCharacter::BeginPlay()
