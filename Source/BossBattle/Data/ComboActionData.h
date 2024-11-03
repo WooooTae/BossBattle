@@ -24,7 +24,7 @@ public:
 	uint8 MaxComboCount;
 
 	UPROPERTY(EditAnywhere,Category=Data)
-	float FrameRate;
+	TArray<float> FrameRate;
 
 	UPROPERTY(EditAnywhere,Category=Data)
 	TArray<float> EffectiveFrameCount;

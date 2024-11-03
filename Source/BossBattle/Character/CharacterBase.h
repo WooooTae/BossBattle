@@ -14,6 +14,17 @@ class BOSSBATTLE_API ACharacterBase : public ACharacter
 public:
 	ACharacterBase();
 
+	// Dead Section
+protected:
+	virtual void SetDead();
+	void PlayDeadAnimation();
+
+	float DeadEventDelayTime = 5.0f;
+
+	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category=Stat,Meta=(PrivateAccess=true))
+	TObjectPtr<class UAnimMontage> DeadMontage;
+
+protected:
 	UPROPERTY(VisibleAnywhere,BluePrintReadOnly,Category=Equiqment,Meta=(AllowPrivateAccess))
 	TObjectPtr<class USkeletalMeshComponent> Weapon;
 };

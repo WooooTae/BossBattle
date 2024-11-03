@@ -7,7 +7,6 @@
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 #include "BossBattle/Data/ComboActionData.h"
 
-
 UGA_Attack::UGA_Attack()
 {
 	InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
@@ -34,14 +33,14 @@ void UGA_Attack::CancelAbility(const FGameplayAbilitySpecHandle Handle, const FG
 }
 
 void UGA_Attack::InputPressed(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo)
-{
-	if (!ComboTimerHandle.IsValid())
+{	
+	if (ComboTimerHandle.IsValid())
 	{
-		HasNextComboInput = false;
+		HasNextComboInput = true;
 	}
 	else
 	{
-		HasNextComboInput = true;
+		HasNextComboInput = false;
 	}
 }
 
@@ -54,6 +53,18 @@ void UGA_Attack::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGame
 	CurrentComboData = nullptr;
 	CurrentCombo = 0;
 	HasNextComboInput = false;
+}
+
+void UGA_Attack::OnComboSectionEnd()
+{
+	if (HasNextComboInput)  
+	{
+		MontageJumpToSection(GetNextSection());  
+	}
+	else
+	{
+		EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
+	}
 }
 
 void UGA_Attack::OnCompleteCallback()
@@ -82,20 +93,27 @@ void UGA_Attack::StartComboTimer()
 	int32 ComboIndex = CurrentCombo - 1;
 	ensure(CurrentComboData->EffectiveFrameCount.IsValidIndex(ComboIndex));
 	
-	const float ComboEffectiveTime = CurrentComboData->EffectiveFrameCount[ComboIndex] / CurrentComboData->FrameRate;
+	const float ComboEffectiveTime = CurrentComboData->EffectiveFrameCount[ComboIndex] / CurrentComboData->FrameRate[ComboIndex];
+
 	if (ComboEffectiveTime > 0.0f)
 	{
-		GetWorld()->GetTimerManager().SetTimer(ComboTimerHandle,this,&UGA_Attack::CheckComboInput,ComboEffectiveTime,false);
+		GetWorld()->GetTimerManager().SetTimer(ComboTimerHandle,this,&UGA_Attack::CheckComboInput,1.0f,false);
 	}
 }
 
 void UGA_Attack::CheckComboInput()
 {
 	ComboTimerHandle.Invalidate();
+
 	if (HasNextComboInput)
 	{
-		MontageJumpToSection(GetNextSection());
-		StartComboTimer();
+		UE_LOG(LogTemp,Log,TEXT("Combo"));
 		HasNextComboInput = false;
+		StartComboTimer();
+		//MontageJumpToSection(GetNextSection());
+	}
+	else
+	{
+		EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
 	}
 }

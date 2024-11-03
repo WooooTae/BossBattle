@@ -4,13 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "Abilities/GameplayAbility.h"
+#include "BossBattle/Interface/ComboInterface.h"
 #include "GA_Attack.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class BOSSBATTLE_API UGA_Attack : public UGameplayAbility
+class BOSSBATTLE_API UGA_Attack : public UGameplayAbility, public IComboInterface
 {
 	GENERATED_BODY()
 	
@@ -22,6 +23,9 @@ public:
 	virtual void CancelAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateCancelAbility) override;
 	virtual void InputPressed(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo) override;
 	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled) override;
+
+public:
+	virtual void OnComboSectionEnd() override;
 
 protected:
 	UFUNCTION()
@@ -40,5 +44,6 @@ protected:
 
 	uint8 CurrentCombo = 0;
 	FTimerHandle ComboTimerHandle;
+public:
 	bool HasNextComboInput = false;
 };
