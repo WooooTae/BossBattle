@@ -57,4 +57,34 @@ void ANonCharacterPlayer::NPCMeshLoadComplete()
 	}
 
 	NPCMeshHandle->ReleaseHandle(); 
-}	
+}
+float ANonCharacterPlayer::GetAIPatrolRadius()
+{
+	return 800.0f;
+}
+
+float ANonCharacterPlayer::GetAIDetectRange()
+{
+	return 100.0f;
+}
+
+float ANonCharacterPlayer::GetAIAttackRange()
+{
+	return 0.0f;
+}
+
+float ANonCharacterPlayer::GetAITurnSpeed()
+{
+	return 2.0f;
+}
+
+void ANonCharacterPlayer::SetAIAttackDelegate(const FAICharacterAttackFinished& InOnAttackFinished)
+{
+
+}
+
+void ANonCharacterPlayer::AttackByAI()
+{
+
+}
+

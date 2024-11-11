@@ -97,7 +97,7 @@ void UGA_Attack::StartComboTimer()
 
 	if (ComboEffectiveTime > 0.0f)
 	{
-		GetWorld()->GetTimerManager().SetTimer(ComboTimerHandle,this,&UGA_Attack::CheckComboInput,1.0f,false);
+		GetWorld()->GetTimerManager().SetTimer(ComboTimerHandle,this,&UGA_Attack::CheckComboInput,ComboEffectiveTime,false);
 	}
 }
 
