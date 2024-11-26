@@ -4,9 +4,15 @@
 #include "NonCharacterPlayer.h"
 #include "Engine/AssetManager.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "AbilitySystemComponent.h"
+#include "Animation/AnimInstance.h"
+#include "BossBattle/AttributeSet/CharacterAttributeSet.h"
 
 ANonCharacterPlayer::ANonCharacterPlayer()
 {
+	ASC = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("ASC"));
+	AttributrSet = CreateDefaultSubobject<UCharacterAttributeSet>(TEXT("AttributeSet"));
+
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh> NPCMeshRef(TEXT("/Script/Engine.SkeletalMesh'/Game/Plladin_RootBone/Maw_J_Laygo.Maw_J_Laygo'"));
 	if (NPCMeshRef.Object)
 	{
@@ -16,12 +22,32 @@ ANonCharacterPlayer::ANonCharacterPlayer()
 
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 
-	GetCharacterMovement()->bOrientRotationToMovement = true;
-	GetCharacterMovement()->RotationRate = FRotator(0.0f, 500.0f, 0.0f);
-	GetCharacterMovement()->JumpZVelocity = 350.0f;
-	GetCharacterMovement()->AirControl = 0.35f;
-	GetCharacterMovement()->MaxWalkSpeed = 500.0f;
-	GetCharacterMovement()->BrakingDecelerationWalking = 2000.0f;
+	GetCharacterMovement()->bUseControllerDesiredRotation = true;
+}
+
+void ANonCharacterPlayer::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+
+	for (const auto& StartAbility : StartAbilities)
+	{
+		FGameplayAbilitySpec StartSpec(StartAbility);
+		ASC->GiveAbility(StartSpec);
+	}
+
+	for (const auto& StartInputAbility : StartInputAbilities)
+	{
+		FGameplayAbilitySpec StartSpec(StartInputAbility.Value);
+		StartSpec.InputID = StartInputAbility.Key;
+		ASC->GiveAbility(StartSpec);
+	}
+
+	ASC->InitAbilityActorInfo(this, this);
+	AttributrSet->OnOutOfHealth.AddDynamic(this, &ThisClass::OnOutOfHealth);
+
+	//FGameplayEffectContextHandle EffectContextHandle = ASC->MakeEffectContext();
+	//EffectContextHandle.AddSourceObject(this);
+	//FGameplayEffectSpecHandle EffectSpecHandle = ASC->MakeOutgoingSpec()
 }
 
 void ANonCharacterPlayer::PostInitializeComponents()
@@ -65,12 +91,12 @@ float ANonCharacterPlayer::GetAIPatrolRadius()
 
 float ANonCharacterPlayer::GetAIDetectRange()
 {
-	return 100.0f;
+	return 400.0f;
 }
 
 float ANonCharacterPlayer::GetAIAttackRange()
 {
-	return 0.0f;
+	return 100.0f;
 }
 
 float ANonCharacterPlayer::GetAITurnSpeed()
@@ -80,11 +106,57 @@ float ANonCharacterPlayer::GetAITurnSpeed()
 
 void ANonCharacterPlayer::SetAIAttackDelegate(const FAICharacterAttackFinished& InOnAttackFinished)
 {
+	OnAttackFinished = InOnAttackFinished;
+}
 
+void ANonCharacterPlayer::GASInputPressed(int32 InputId)
+{
+	FGameplayAbilitySpec* Spec = ASC->FindAbilitySpecFromInputID(InputId);
+	if (Spec)
+	{
+		Spec->InputPressed = true;
+		if (Spec->IsActive())
+		{
+			ASC->AbilitySpecInputPressed(*Spec);
+		}
+		else
+		{
+			ASC->TryActivateAbility(Spec->Handle);
+		}
+	}
+}
+
+void ANonCharacterPlayer::GASInputReleased(int32 InputId)
+{
+	FGameplayAbilitySpec* Spec = ASC->FindAbilitySpecFromInputID(InputId);
+	if (Spec)
+	{
+		Spec->InputPressed = false;
+		if (Spec->IsActive())
+		{
+			ASC->AbilitySpecInputReleased(*Spec);
+		}
+	}
 }
 
 void ANonCharacterPlayer::AttackByAI()
 {
+	//GASInputPressed(0);
 
+	UAnimInstance* Anim = GetMesh()->GetAnimInstance();
+	if (Anim)
+	{
+		Anim->Montage_Play(ComboActionMontage,1.0f);
+	}
+}
+
+void ANonCharacterPlayer::NotifyComboActionEnd()
+{
+	OnAttackFinished.ExecuteIfBound();
+}
+
+void ANonCharacterPlayer::OnOutOfHealth()
+{
+	SetDead();
 }
 

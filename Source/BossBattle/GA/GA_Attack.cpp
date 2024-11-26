@@ -2,7 +2,7 @@
 
 
 #include "GA_Attack.h"
-#include "BossBattle/Character/PlayerCharacter.h"
+#include "BossBattle/Character/CharacterBase.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 #include "BossBattle/Data/ComboActionData.h"
@@ -16,7 +16,7 @@ void UGA_Attack::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const 
 {
 	Super::ActivateAbility(Handle,ActorInfo,ActivationInfo,TriggerEventData);
 
-	APlayerCharacter* Character = CastChecked<APlayerCharacter>(ActorInfo->AvatarActor.Get());
+	ACharacterBase* Character = CastChecked<ACharacterBase>(ActorInfo->AvatarActor.Get());
 	CurrentComboData = Character->GetComboActionData();
 
 	UAbilityTask_PlayMontageAndWait* PlayAttackTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("PlayAttack"), Character->GetComboActionMontage(), 1.0f, GetNextSection());
@@ -48,7 +48,7 @@ void UGA_Attack::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGame
 {
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 
-	APlayerCharacter* Character = CastChecked<APlayerCharacter>(ActorInfo->AvatarActor.Get());
+	ACharacterBase* Character = CastChecked<ACharacterBase>(ActorInfo->AvatarActor.Get());
 
 	CurrentComboData = nullptr;
 	CurrentCombo = 0;
@@ -97,7 +97,7 @@ void UGA_Attack::StartComboTimer()
 
 	if (ComboEffectiveTime > 0.0f)
 	{
-		GetWorld()->GetTimerManager().SetTimer(ComboTimerHandle,this,&UGA_Attack::CheckComboInput,ComboEffectiveTime,false);
+		GetWorld()->GetTimerManager().SetTimer(ComboTimerHandle,this,&UGA_Attack::CheckComboInput,1.0f,false);
 	}
 }
 
@@ -110,7 +110,6 @@ void UGA_Attack::CheckComboInput()
 		UE_LOG(LogTemp,Log,TEXT("Combo"));
 		HasNextComboInput = false;
 		StartComboTimer();
-		//MontageJumpToSection(GetNextSection());
 	}
 	else
 	{

@@ -3,13 +3,14 @@
 
 #include "AnimNotify_ComboSectionEndNotify.h"
 #include "BossBattle/Character/PlayerCharacter.h"
+#include "BossBattle/Character/CharacterBase.h"
 #include "AbilitySystemComponent.h"
 #include "BossBattle/GA/GA_Attack.h"	
 #include "BossBattle/Interface/ComboInterface.h"
 
 void UAnimNotify_ComboSectionEndNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference)
 {
-	if (APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(MeshComp->GetOwner()))
+	if (ACharacterBase* PlayerCharacter = Cast<ACharacterBase>(MeshComp->GetOwner()))
 	{
 		if (UAbilitySystemComponent* AbilitySystem = PlayerCharacter->GetAbilitySystemComponent())
 		{

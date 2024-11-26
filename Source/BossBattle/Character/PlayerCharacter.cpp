@@ -12,6 +12,7 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "AbilitySystemComponent.h"
 #include "BossBattle/Player/MyPlayerState.h"
+#include "BossBattle/AttributeSet/CharacterAttributeSet.h"
 
 APlayerCharacter::APlayerCharacter()
 {
@@ -26,14 +27,6 @@ APlayerCharacter::APlayerCharacter()
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	FollowCamera->SetupAttachment(CameraBoom);
 	FollowCamera->bUsePawnControlRotation = false;
-
-	//Movement
-	GetCharacterMovement()->bOrientRotationToMovement = true;
-	GetCharacterMovement()->RotationRate = FRotator(0.0f, 500.0f, 0.0f);
-	GetCharacterMovement()->JumpZVelocity = 350.0f;
-	GetCharacterMovement()->AirControl = 0.35f;
-	GetCharacterMovement()->MaxWalkSpeed = 500.0f;
-	GetCharacterMovement()->BrakingDecelerationWalking = 2000.0f;
 
 	//Mesh
 	GetMesh()->SetRelativeLocationAndRotation(FVector(0.0f, 0.0f, -100.0f), FRotator(0.0f, -90.0f, 0.0f));
@@ -73,11 +66,6 @@ void APlayerCharacter::BeginPlay()
 	}
 }
 
-UAbilitySystemComponent* APlayerCharacter::GetAbilitySystemComponent() const
-{
-	return ASC;
-}
-
 void APlayerCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
@@ -87,6 +75,13 @@ void APlayerCharacter::PossessedBy(AController* NewController)
 	{
 		ASC = PS->GetAbilitySystemComponent();
 		ASC->InitAbilityActorInfo(PS,this);
+
+
+		const UCharacterAttributeSet* CurrentAttributeSet = ASC->GetSet<UCharacterAttributeSet>();
+		if (CurrentAttributeSet)
+		{
+			CurrentAttributeSet->OnOutOfHealth.AddDynamic(this, &ThisClass::OnOutOfHealth);
+		}
 
 		for (const auto& StartAbility : StartAbilities)
 		{
@@ -102,6 +97,7 @@ void APlayerCharacter::PossessedBy(AController* NewController)
 		}
 
 		APlayerController* PlayerController = CastChecked<APlayerController>(NewController);
+		PlayerController->ConsoleCommand(TEXT("showdebug abilitysystem"));
 	}
 }
 
@@ -149,6 +145,11 @@ void APlayerCharacter::GASInputReleased(int32 InputId)
 			ASC->AbilitySpecInputReleased(*Spec);
 		}
 	}
+}
+
+void APlayerCharacter::OnOutOfHealth()
+{
+	SetDead();
 }
 
 void APlayerCharacter::Move(const FInputActionValue& Value)

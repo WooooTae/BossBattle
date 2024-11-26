@@ -9,14 +9,23 @@
 // Sets default values
 ACharacterBase::ACharacterBase()
 {
+	//Movement
+	GetCharacterMovement()->bOrientRotationToMovement = true;
+	GetCharacterMovement()->RotationRate = FRotator(0.0f, 500.0f, 0.0f);
+	GetCharacterMovement()->JumpZVelocity = 350.0f;
+	GetCharacterMovement()->AirControl = 0.35f;
+	GetCharacterMovement()->MaxWalkSpeed = 500.0f;
+	GetCharacterMovement()->BrakingDecelerationWalking = 2000.0f;
+
 	//Pawn
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = false;
 	bUseControllerRotationRoll = false;
+}
 
-	//Capsule
-	GetCapsuleComponent()->InitCapsuleSize(42.0f,96.0f);
-
+UAbilitySystemComponent* ACharacterBase::GetAbilitySystemComponent() const
+{
+	return ASC;
 }
 
 void ACharacterBase::SetDead()

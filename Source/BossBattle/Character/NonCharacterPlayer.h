@@ -19,6 +19,8 @@ class BOSSBATTLE_API ANonCharacterPlayer : public ACharacterBase,public INPCAIIn
 public:
 	ANonCharacterPlayer();
 
+	virtual void PossessedBy(AController* NewController) override;
+
 protected:
 	virtual void PostInitializeComponents() override;
 	virtual void SetDead() override;
@@ -36,7 +38,20 @@ protected:
 	virtual float GetAITurnSpeed() override;
 
 	virtual void SetAIAttackDelegate(const FAICharacterAttackFinished& InOnAttackFinished) override;
+
+	void GASInputPressed(int32 InputId);
+public:
+	virtual void GASInputReleased(int32 InputId) override;
+
 	virtual void AttackByAI() override;
 
 	FAICharacterAttackFinished OnAttackFinished;
+
+	void NotifyComboActionEnd();
+
+	UPROPERTY(EditAnywhere, Category = GAS)
+	TObjectPtr<class UCharacterAttributeSet> AttributrSet;
+
+	UFUNCTION()
+	virtual void OnOutOfHealth();
 };
