@@ -6,6 +6,7 @@
 #include "CharacterBase.h"
 #include "InputActionValue.h"
 #include "Abilities/GameplayAbilityTypes.h"
+#include "BossBattle/Interface/CharacterWidgetInterface.h"
 #include "PlayerCharacter.generated.h"
 
 /**
@@ -32,6 +33,8 @@ protected:
 	void SetupGASInputComponent();
 	void GASInputPressed(int32 InputId);
 	void GASInputReleased(int32 InputId);
+
+	virtual void SetDead() override;
 
 	UFUNCTION()
 	virtual void OnOutOfHealth();

@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "AbilitySystemInterface.h"
+#include "BossBattle/Interface/NPCAIInterface.h"
 #include "CharacterBase.generated.h"
 
 UCLASS()
@@ -18,8 +19,13 @@ public:
 public:
 	virtual class UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
+	FORCEINLINE class UAnimMontage* GetHittedMontage() const { return HittedMontage; }
 	FORCEINLINE class UAnimMontage* GetComboActionMontage() const { return ComboActionMontage; }
 	FORCEINLINE class UComboActionData* GetComboActionData() const { return ComboActionData; }
+
+	FAICharacterAttackFinished OnAttackFinished;
+
+	void NotifyComboActionEnd();
 
 protected:
 	virtual void SetDead();
@@ -42,6 +48,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = GAS)
 	TMap<int32, TSubclassOf<class UGameplayAbility>> StartInputAbilities;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
+	TObjectPtr<class UAnimMontage> HittedMontage;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
 	TObjectPtr<class UAnimMontage> ComboActionMontage;

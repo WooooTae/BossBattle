@@ -20,4 +20,10 @@ public:
 	
 protected:
 	virtual void BeginPlay() override;
+
+protected:
+	TSubclassOf<class UUserWidget> HUDWidgetClass;
+
+public:
+	TObjectPtr<class UMyHPBarWidget> HUDWidget;
 };

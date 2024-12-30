@@ -13,10 +13,14 @@
 #include "AbilitySystemComponent.h"
 #include "BossBattle/Player/MyPlayerState.h"
 #include "BossBattle/AttributeSet/CharacterAttributeSet.h"
+#include "BossBattle/UI/MyWidgetComponent.h"
+#include "BossBattle/UI/MyUserWidget.h"
+#include "BossBattle/UI/MyHPBarWidget.h"
+#include "BossBattle/UI/MyHUDWidget.h"
 
 APlayerCharacter::APlayerCharacter()
 {
-	ASC = nullptr;
+	ASC = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("ASC"));
 
 	//Camera
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
@@ -45,7 +49,9 @@ APlayerCharacter::APlayerCharacter()
 	{
 		WeaponMesh = WeaponMeshRef.Object;
 		Weapon->SetSkeletalMesh(WeaponMeshRef.Object);
-	}	
+	}
+
+	
 }
 
 void APlayerCharacter::BeginPlay()
@@ -71,11 +77,12 @@ void APlayerCharacter::PossessedBy(AController* NewController)
 	Super::PossessedBy(NewController);
 
 	AMyPlayerState* PS =  GetPlayerState<AMyPlayerState>();
+	AMyPlayerController* PC = Cast<AMyPlayerController>(NewController);
+
 	if (PS)
 	{
 		ASC = PS->GetAbilitySystemComponent();
 		ASC->InitAbilityActorInfo(PS,this);
-
 
 		const UCharacterAttributeSet* CurrentAttributeSet = ASC->GetSet<UCharacterAttributeSet>();
 		if (CurrentAttributeSet)
@@ -147,6 +154,19 @@ void APlayerCharacter::GASInputReleased(int32 InputId)
 	}
 }
 
+void APlayerCharacter::SetDead()
+{
+	Super::SetDead();
+
+	FTimerHandle DeadTimerHandle;
+	GetWorld()->GetTimerManager().SetTimer(DeadTimerHandle,FTimerDelegate::CreateLambda(
+	[&]()
+	{
+	Destroy();
+	}
+	),DeadEventDelayTime,false);
+}
+
 void APlayerCharacter::OnOutOfHealth()
 {
 	SetDead();
@@ -187,4 +207,5 @@ void APlayerCharacter::RunaAndWalk(const FInputActionValue& Value)
 		GetCharacterMovement()->MaxWalkSpeed = 500.0f;
 	}
 }
+
 			

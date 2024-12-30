@@ -8,7 +8,7 @@
 
 UBTTask_Attack::UBTTask_Attack()
 {
-	bNotifyTick = true;
+	
 }
 
 EBTNodeResult::Type UBTTask_Attack::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
@@ -32,8 +32,8 @@ EBTNodeResult::Type UBTTask_Attack::ExecuteTask(UBehaviorTreeComponent& OwnerCom
 	OnAttackFinished.BindLambda(
 		[&]()
 		{
+			UE_LOG(LogTemp,Log,TEXT("Bind Succees"));
 			FinishLatentTask(OwnerComp,EBTNodeResult::Succeeded);
-			AIPawn->GASInputReleased(0);
 		}
 	);
 	AIPawn->SetAIAttackDelegate(OnAttackFinished);

@@ -6,6 +6,8 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 #include "BossBattle/Data/ComboActionData.h"
+#include "BossBattle/Character/NonCharacterPlayer.h"
+#include "BossBattle/Interface/NPCAIInterface.h"	
 
 UGA_Attack::UGA_Attack()
 {
@@ -57,13 +59,38 @@ void UGA_Attack::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGame
 
 void UGA_Attack::OnComboSectionEnd()
 {
-	if (HasNextComboInput)  
+	AActor* Character = CurrentActorInfo->AvatarActor.Get();
+	ANonCharacterPlayer* Target = Cast<ANonCharacterPlayer>(Character);
+
+	if (IsValid(Target))
 	{
-		MontageJumpToSection(GetNextSection());  
+		if (CurrentCombo != 4)
+		{
+			Target->NotifyComboActionEnd();
+
+			MontageJumpToSection(GetNextSection());
+
+			if (CurrentCombo == 3)
+			{
+				EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
+			}
+		}
+		else
+		{
+			Target->NotifyComboActionEnd();
+			EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
+		}
 	}
 	else
 	{
-		EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
+		if (HasNextComboInput)  
+		{   
+				MontageJumpToSection(GetNextSection());  
+        }
+        else
+		{
+			EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
+		}
 	}
 }
 
@@ -107,9 +134,8 @@ void UGA_Attack::CheckComboInput()
 
 	if (HasNextComboInput)
 	{
-		UE_LOG(LogTemp,Log,TEXT("Combo"));
-		HasNextComboInput = false;
 		StartComboTimer();
+		HasNextComboInput = false;
 	}
 	else
 	{

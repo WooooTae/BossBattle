@@ -45,12 +45,11 @@ public:
 
 	virtual void AttackByAI() override;
 
-	FAICharacterAttackFinished OnAttackFinished;
-
-	void NotifyComboActionEnd();
-
 	UPROPERTY(EditAnywhere, Category = GAS)
 	TObjectPtr<class UCharacterAttributeSet> AttributrSet;
+
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<class UMyWidgetComponent> HpBar;
 
 	UFUNCTION()
 	virtual void OnOutOfHealth();

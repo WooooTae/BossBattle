@@ -7,12 +7,26 @@
 #include "AbilitySystemComponent.h"
 #include "Animation/AnimInstance.h"
 #include "BossBattle/AttributeSet/CharacterAttributeSet.h"
+#include "BossBattle/UI/MyWidgetComponent.h"
+#include "BossBattle/UI/MyUserWidget.h"
 
 ANonCharacterPlayer::ANonCharacterPlayer()
 {
 	ASC = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("ASC"));
 	AttributrSet = CreateDefaultSubobject<UCharacterAttributeSet>(TEXT("AttributeSet"));
 
+	HpBar = CreateDefaultSubobject<UMyWidgetComponent>(TEXT("Widget"));
+	HpBar->SetupAttachment(GetMesh());
+	HpBar->SetRelativeLocation(FVector(0.0f,0.0f,250.0f));
+
+	static ConstructorHelpers::FClassFinder<UUserWidget> HpBarWidgetRef(TEXT("/Game/BossBattle/Blueprint/UI/WBP_HpBar.WBP_HpBar_C"));
+	if (HpBarWidgetRef.Class)
+	{
+		HpBar->SetWidgetClass(HpBarWidgetRef.Class);
+		HpBar->SetWidgetSpace(EWidgetSpace::Screen);
+		HpBar->SetDrawSize(FVector2D(300.0f,30.0f));
+		HpBar->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	}
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh> NPCMeshRef(TEXT("/Script/Engine.SkeletalMesh'/Game/Plladin_RootBone/Maw_J_Laygo.Maw_J_Laygo'"));
 	if (NPCMeshRef.Object)
 	{
@@ -44,10 +58,6 @@ void ANonCharacterPlayer::PossessedBy(AController* NewController)
 
 	ASC->InitAbilityActorInfo(this, this);
 	AttributrSet->OnOutOfHealth.AddDynamic(this, &ThisClass::OnOutOfHealth);
-
-	//FGameplayEffectContextHandle EffectContextHandle = ASC->MakeEffectContext();
-	//EffectContextHandle.AddSourceObject(this);
-	//FGameplayEffectSpecHandle EffectSpecHandle = ASC->MakeOutgoingSpec()
 }
 
 void ANonCharacterPlayer::PostInitializeComponents()
@@ -96,7 +106,7 @@ float ANonCharacterPlayer::GetAIDetectRange()
 
 float ANonCharacterPlayer::GetAIAttackRange()
 {
-	return 100.0f;
+	return  AttributrSet->GetAttackRange() + AttributrSet->GetAttackRadius() * 2;
 }
 
 float ANonCharacterPlayer::GetAITurnSpeed()
@@ -141,18 +151,27 @@ void ANonCharacterPlayer::GASInputReleased(int32 InputId)
 
 void ANonCharacterPlayer::AttackByAI()
 {
-	//GASInputPressed(0);
-
-	UAnimInstance* Anim = GetMesh()->GetAnimInstance();
-	if (Anim)
+	if (ASC)
 	{
-		Anim->Montage_Play(ComboActionMontage,1.0f);
-	}
-}
+		GetCharacterMovement()->MovementMode = EMovementMode::MOVE_None;
 
-void ANonCharacterPlayer::NotifyComboActionEnd()
-{
-	OnAttackFinished.ExecuteIfBound();
+		FGameplayAbilitySpec* Spec = ASC->FindAbilitySpecFromInputID(0);
+		if (Spec)
+		{
+			if (Spec->IsActive())
+			{
+				Spec->InputPressed = true;
+				ASC->AbilitySpecInputPressed(*Spec);
+			}
+			else
+			{
+				Spec->InputPressed = true;
+				ASC->TryActivateAbility(Spec->Handle);
+			}
+		}
+
+		//GASInputPressed(0);
+	}
 }
 
 void ANonCharacterPlayer::OnOutOfHealth()

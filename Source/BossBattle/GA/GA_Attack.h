@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Abilities/GameplayAbility.h"
 #include "BossBattle/Interface/ComboInterface.h"
+#include "BossBattle/Interface/NPCAIInterface.h"	
 #include "GA_Attack.generated.h"
 
 /**
@@ -46,4 +47,6 @@ protected:
 	FTimerHandle ComboTimerHandle;
 public:
 	bool HasNextComboInput = false;
+
+	FAICharacterAttackFinished OnAttackFinished;
 };

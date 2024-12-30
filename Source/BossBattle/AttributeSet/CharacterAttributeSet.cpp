@@ -6,11 +6,12 @@
 
 UCharacterAttributeSet::UCharacterAttributeSet() :
 	AttackRange(100.0f),
-	AttackRadius(50.f),
-	AttackRate(30.0f),
 	MaxAttackRange(300.0f),
+	AttackRadius(50.f),
 	MaxAttackRadius(150.0f),
+	AttackRate(30.0f),
 	MaxAttackRate(100.0f),
+	Health(100.0f),
 	MaxHealth(100.0f),
 	Damage(0.0f)
 {

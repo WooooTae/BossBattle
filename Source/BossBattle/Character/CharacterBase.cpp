@@ -28,6 +28,13 @@ UAbilitySystemComponent* ACharacterBase::GetAbilitySystemComponent() const
 	return ASC;
 }
 
+void ACharacterBase::NotifyComboActionEnd()
+{
+	OnAttackFinished.ExecuteIfBound();
+	GetCharacterMovement()->MovementMode = EMovementMode::MOVE_Walking;
+	//OnAttackFinished.ExecuteIfBound();
+}
+
 void ACharacterBase::SetDead()
 {
 	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
