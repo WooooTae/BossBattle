@@ -7,6 +7,7 @@
 #include "AbilitySystemComponent.h"
 #include "Animation/AnimInstance.h"
 #include "BossBattle/AttributeSet/CharacterAttributeSet.h"
+#include "BossBattle/AttributeSet/NPCSkillAttributeSet.h"
 #include "BossBattle/UI/MyWidgetComponent.h"
 #include "BossBattle/UI/MyUserWidget.h"
 
@@ -14,6 +15,7 @@ ANonCharacterPlayer::ANonCharacterPlayer()
 {
 	ASC = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("ASC"));
 	AttributrSet = CreateDefaultSubobject<UCharacterAttributeSet>(TEXT("AttributeSet"));
+	SkillAttributeSet = CreateDefaultSubobject<UNPCSkillAttributeSet>(TEXT("SkillAttributeSet"));
 
 	HpBar = CreateDefaultSubobject<UMyWidgetComponent>(TEXT("Widget"));
 	HpBar->SetupAttachment(GetMesh());
@@ -27,7 +29,7 @@ ANonCharacterPlayer::ANonCharacterPlayer()
 		HpBar->SetDrawSize(FVector2D(300.0f,30.0f));
 		HpBar->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	}
-	static ConstructorHelpers::FObjectFinder<USkeletalMesh> NPCMeshRef(TEXT("/Script/Engine.SkeletalMesh'/Game/Plladin_RootBone/Maw_J_Laygo.Maw_J_Laygo'"));
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> NPCMeshRef(TEXT("/Script/Engine.SkeletalMesh'/Game/Plladin_RootBone/Maw_J_Laygo_root.Maw_J_Laygo_root'"));
 	if (NPCMeshRef.Object)
 	{
 		NPCMesh = NPCMeshRef.Object;

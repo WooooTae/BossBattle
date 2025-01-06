@@ -10,6 +10,8 @@
 
 void UAnimNotify_ComboSectionEndNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference)
 {
+	Super::Notify(MeshComp, Animation, EventReference);
+
 	if (ACharacterBase* PlayerCharacter = Cast<ACharacterBase>(MeshComp->GetOwner()))
 	{
 		if (UAbilitySystemComponent* AbilitySystem = PlayerCharacter->GetAbilitySystemComponent())

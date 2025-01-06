@@ -21,6 +21,7 @@ public:
 
 	FORCEINLINE class UAnimMontage* GetHittedMontage() const { return HittedMontage; }
 	FORCEINLINE class UAnimMontage* GetComboActionMontage() const { return ComboActionMontage; }
+	FORCEINLINE class UAnimMontage* GetBasicSkillMontage() const { return BasicSkillMontage; }
 	FORCEINLINE class UComboActionData* GetComboActionData() const { return ComboActionData; }
 
 	FAICharacterAttackFinished OnAttackFinished;
@@ -57,4 +58,7 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UComboActionData> ComboActionData;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
+	TObjectPtr<class UAnimMontage> BasicSkillMontage;
 };

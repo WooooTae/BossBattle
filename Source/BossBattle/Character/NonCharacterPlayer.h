@@ -48,6 +48,9 @@ public:
 	UPROPERTY(EditAnywhere, Category = GAS)
 	TObjectPtr<class UCharacterAttributeSet> AttributrSet;
 
+	UPROPERTY()
+	TObjectPtr<class UNPCSkillAttributeSet> SkillAttributeSet;
+
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<class UMyWidgetComponent> HpBar;
 
