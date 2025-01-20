@@ -32,7 +32,7 @@ protected:
 	virtual void SetDead();
 	void PlayDeadAnimation();
 
-	float DeadEventDelayTime = 5.0f;
+	float DeadEventDelayTime = 2.3f;
 
 	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category=Stat,Meta=(PrivateAccess=true))
 	TObjectPtr<class UAnimMontage> DeadMontage;
@@ -44,7 +44,7 @@ protected:
 	UPROPERTY(EditAnywhere, Category = GAS)
 	TObjectPtr<class UAbilitySystemComponent> ASC;
 
-	UPROPERTY(EditAnywhere, Category = GAS)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = GAS)
 	TArray<TSubclassOf<class UGameplayAbility>> StartAbilities;
 
 	UPROPERTY(EditAnywhere, Category = GAS)

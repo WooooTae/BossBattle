@@ -16,6 +16,8 @@ ATA_Trace::ATA_Trace()
 
 void ATA_Trace::StartTargeting(UGameplayAbility* Ability)
 {
+	UE_LOG(LogTemp,Log,TEXT("TA_Trace Check"));
+
 	Super::StartTargeting(Ability);
 
 	SourceActor = Ability->GetCurrentActorInfo()->AvatarActor.Get();

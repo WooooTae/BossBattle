@@ -4,7 +4,7 @@
 #include "NPCSkillAttributeSet.h"
 
 UNPCSkillAttributeSet::UNPCSkillAttributeSet() :
-	SkillRange(800.0f),
+	SkillRange(500.0f),
 	MaxSkillRange(1200.0f),
 	SkillAttackRate(150.f),
 	MaxSkillAttackRate(300.0f),

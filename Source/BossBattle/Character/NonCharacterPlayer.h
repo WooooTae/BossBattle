@@ -43,7 +43,7 @@ protected:
 public:
 	virtual void GASInputReleased(int32 InputId) override;
 
-	virtual void AttackByAI() override;
+	virtual void AttackByAI(int32 InputId) override;
 
 	UPROPERTY(EditAnywhere, Category = GAS)
 	TObjectPtr<class UCharacterAttributeSet> AttributrSet;

@@ -10,6 +10,8 @@
 #include "BossBattle/AttributeSet/NPCSkillAttributeSet.h"
 #include "BossBattle/UI/MyWidgetComponent.h"
 #include "BossBattle/UI/MyUserWidget.h"
+#include "BossBattle/Player/MyPlayerController.h"
+#include "Components/CapsuleComponent.h"
 
 ANonCharacterPlayer::ANonCharacterPlayer()
 {
@@ -20,6 +22,8 @@ ANonCharacterPlayer::ANonCharacterPlayer()
 	HpBar = CreateDefaultSubobject<UMyWidgetComponent>(TEXT("Widget"));
 	HpBar->SetupAttachment(GetMesh());
 	HpBar->SetRelativeLocation(FVector(0.0f,0.0f,250.0f));
+
+	GetCapsuleComponent()->SetGenerateOverlapEvents(true);
 
 	static ConstructorHelpers::FClassFinder<UUserWidget> HpBarWidgetRef(TEXT("/Game/BossBattle/Blueprint/UI/WBP_HpBar.WBP_HpBar_C"));
 	if (HpBarWidgetRef.Class)
@@ -49,6 +53,7 @@ void ANonCharacterPlayer::PossessedBy(AController* NewController)
 	{
 		FGameplayAbilitySpec StartSpec(StartAbility);
 		ASC->GiveAbility(StartSpec);
+	    ASC->IsActive();
 	}
 
 	for (const auto& StartInputAbility : StartInputAbilities)
@@ -72,6 +77,12 @@ void ANonCharacterPlayer::PostInitializeComponents()
 void ANonCharacterPlayer::SetDead()
 {
    Super::SetDead();
+
+   AMyPlayerController* PlayerController = Cast<AMyPlayerController>(GetController());
+   if (PlayerController)
+   {
+	   DisableInput(PlayerController);
+   }
 
    FTimerHandle DeadTimeHandle;
    GetWorld()->GetTimerManager().SetTimer(DeadTimeHandle, FTimerDelegate::CreateLambda(
@@ -151,13 +162,13 @@ void ANonCharacterPlayer::GASInputReleased(int32 InputId)
 	}
 }
 
-void ANonCharacterPlayer::AttackByAI()
+void ANonCharacterPlayer::AttackByAI(int32 InputId)
 {
 	if (ASC)
 	{
 		GetCharacterMovement()->MovementMode = EMovementMode::MOVE_None;
 
-		FGameplayAbilitySpec* Spec = ASC->FindAbilitySpecFromInputID(0);
+		FGameplayAbilitySpec* Spec = ASC->FindAbilitySpecFromInputID(InputId);
 		if (Spec)
 		{
 			if (Spec->IsActive())
@@ -171,8 +182,6 @@ void ANonCharacterPlayer::AttackByAI()
 				ASC->TryActivateAbility(Spec->Handle);
 			}
 		}
-
-		//GASInputPressed(0);
 	}
 }
 

@@ -32,11 +32,10 @@ EBTNodeResult::Type UBTTask_Attack::ExecuteTask(UBehaviorTreeComponent& OwnerCom
 	OnAttackFinished.BindLambda(
 		[&]()
 		{
-			UE_LOG(LogTemp,Log,TEXT("Bind Succees"));
 			FinishLatentTask(OwnerComp,EBTNodeResult::Succeeded);
 		}
 	);
 	AIPawn->SetAIAttackDelegate(OnAttackFinished);
-	AIPawn->AttackByAI();
+	AIPawn->AttackByAI(0);
 	return EBTNodeResult::InProgress;
 }

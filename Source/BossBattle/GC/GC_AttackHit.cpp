@@ -9,6 +9,7 @@
 #include "NiagaraFunctionLibrary.h" 
 #include "Animation/AnimInstance.h"
 #include "BossBattle/Character/CharacterBase.h"
+#include "Kismet/GameplayStatics.h"
 
 UGC_AttackHit::UGC_AttackHit()
 {
@@ -20,7 +21,11 @@ bool UGC_AttackHit::OnExecute_Implementation(AActor* Target, const FGameplayCueP
 	const FHitResult* HitResult = Parameters.EffectContext.GetHitResult();
 	if (HitResult)
 	{
-		UNiagaraFunctionLibrary::SpawnSystemAtLocation(Target, NiagaraSystem, HitResult->ImpactPoint, FRotator::ZeroRotator, FVector(1.0f, 1.0f, 1.0f) ,true);
+		if (NiagaraSystem)
+		{
+			UNiagaraFunctionLibrary::SpawnSystemAtLocation(Target, NiagaraSystem, HitResult->ImpactPoint, HitResult->ImpactNormal.Rotation(), FVector(1.0f, 1.0f, 1.0f), true);
+		}
+
 		ACharacterBase* Character = Cast<ACharacterBase>(Target);
 		if (Character)
 		{

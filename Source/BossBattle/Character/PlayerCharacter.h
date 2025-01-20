@@ -21,6 +21,7 @@ public:
 	APlayerCharacter();
 	FORCEINLINE class UAnimMontage* GetJumpActionMontage() const { return JumpActionMontage; }
 	FORCEINLINE class UAnimMontage* GetRollActionMontage() const {return RollActionMontage;}
+	FORCEINLINE class UAnimMontage* GetSpellActionMontage() const { return SpellActionMontage; }
 
 protected:
 	virtual void BeginPlay() override;
@@ -67,6 +68,9 @@ protected:
 	UPROPERTY(EditAnywhere,BluePrintReadOnly,Category=Input,Meta=(AllowPrivateAccess="true"))
 	TObjectPtr<class UInputAction> RollAction;
 
+	UPROPERTY(EditAnywhere, BluePrintReadWrite, Category = Input, Meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class UInputAction> SpellAction;
+
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
 	void RunaAndWalk(const FInputActionValue& Value);
@@ -82,4 +86,7 @@ protected:
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category=Animation)
 	TObjectPtr<class UAnimMontage> RollActionMontage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
+	TObjectPtr<class UAnimMontage> SpellActionMontage;
 };

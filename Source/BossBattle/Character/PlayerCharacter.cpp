@@ -50,8 +50,11 @@ APlayerCharacter::APlayerCharacter()
 		WeaponMesh = WeaponMeshRef.Object;
 		Weapon->SetSkeletalMesh(WeaponMeshRef.Object);
 	}
-
-	
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> DeadMontageRef(TEXT("/Script/Engine.AnimMontage'/Game/BossBattle/Blueprint/Animation/AM_PlayerDead.AM_PlayerDead'"));
+	if (DeadMontageRef.Object)
+	{
+		DeadMontage = DeadMontageRef.Object;
+	}
 }
 
 void APlayerCharacter::BeginPlay()
@@ -94,6 +97,7 @@ void APlayerCharacter::PossessedBy(AController* NewController)
 		{
 			FGameplayAbilitySpec StartSpec(StartAbility);
 			ASC->GiveAbility(StartSpec);
+			ASC->IsActive();
 		}
 
 		for (const auto& StartInputAbility : StartInputAbilities)
@@ -122,6 +126,7 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &APlayerCharacter::GASInputReleased, 0);
 	EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Triggered, this, &APlayerCharacter::GASInputPressed, 1);
 	EnhancedInputComponent->BindAction(RollAction, ETriggerEvent::Triggered, this, &APlayerCharacter::GASInputPressed, 2);
+	EnhancedInputComponent->BindAction(SpellAction, ETriggerEvent::Triggered, this, &APlayerCharacter::GASInputPressed, 3);
 }
 
 void APlayerCharacter::GASInputPressed(int32 InputId)
@@ -156,13 +161,18 @@ void APlayerCharacter::GASInputReleased(int32 InputId)
 
 void APlayerCharacter::SetDead()
 {
+	if (ASC)
+	{
+		ASC->CancelAbilities();
+	}
+
 	Super::SetDead();
 
 	FTimerHandle DeadTimerHandle;
 	GetWorld()->GetTimerManager().SetTimer(DeadTimerHandle,FTimerDelegate::CreateLambda(
 	[&]()
 	{
-	Destroy();
+		Destroy();
 	}
 	),DeadEventDelayTime,false);
 }
