@@ -71,6 +71,9 @@ protected:
 	UPROPERTY(EditAnywhere, BluePrintReadWrite, Category = Input, Meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UInputAction> SpellAction;
 
+	UPROPERTY(EditAnywhere, BluePrintReadWrite, Category = Input, Meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class UInputAction> SkillAction;
+
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
 	void RunaAndWalk(const FInputActionValue& Value);

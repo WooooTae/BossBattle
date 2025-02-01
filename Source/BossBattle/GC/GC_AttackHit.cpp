@@ -41,6 +41,13 @@ bool UGC_AttackHit::OnExecute_Implementation(AActor* Target, const FGameplayCueP
 		{
 			if (TargetActor.Get())
 			{
+				ACharacterBase* Character = Cast<ACharacterBase>(TargetActor.Get());
+				if (Character)
+				{
+					UAnimInstance* AnimInstance = Character->GetMesh()->GetAnimInstance();
+					AnimInstance->Montage_Play(Character->GetHittedMontage());
+				}
+
 				UNiagaraFunctionLibrary::SpawnSystemAtLocation(Target, NiagaraSystem, TargetActor.Get()->GetActorLocation(), FRotator::ZeroRotator, FVector(1.0f, 1.0f, 1.0f), true);
 			}
 		}

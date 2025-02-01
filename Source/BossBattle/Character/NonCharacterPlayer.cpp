@@ -78,12 +78,6 @@ void ANonCharacterPlayer::SetDead()
 {
    Super::SetDead();
 
-   AMyPlayerController* PlayerController = Cast<AMyPlayerController>(GetController());
-   if (PlayerController)
-   {
-	   DisableInput(PlayerController);
-   }
-
    FTimerHandle DeadTimeHandle;
    GetWorld()->GetTimerManager().SetTimer(DeadTimeHandle, FTimerDelegate::CreateLambda(
 	   [&]()
@@ -187,6 +181,8 @@ void ANonCharacterPlayer::AttackByAI(int32 InputId)
 
 void ANonCharacterPlayer::OnOutOfHealth()
 {
+	IsDead = true;
+
 	SetDead();
 }
 

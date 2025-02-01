@@ -4,6 +4,7 @@
 #include "CharacterAnimInstance.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "BossBattle/Character/CharacterBase.h"
 
 UCharacterAnimInstance::UCharacterAnimInstance()
 {
@@ -33,5 +34,9 @@ void UCharacterAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 		bIsIdle = GroundSpeed < MovingThreshould;
 		bIsFalling = Movement->IsFalling();
 		bIsJumping = bIsFalling & (Velocity.Z > JumpingThreshould);
+		if (Owner)
+		{
+			bIsDead = Cast<ACharacterBase>(GetOwningActor())->GetDeadCondition();
+		}
 	}
 }

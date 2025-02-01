@@ -9,6 +9,7 @@
 #include "Abilities/GameplayAbility.h"
 #include "Kismet/GameplayStatics.h"
 #include "BossBattle/Character/NonCharacterPlayer.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values
 AFireball::AFireball()
@@ -33,6 +34,7 @@ AFireball::AFireball()
         AttackDamageEffect = FireballCalssRef.Class;
     }
     CollisionComponent->OnComponentBeginOverlap.AddDynamic(this,&AFireball::OnOverlap);
+    CollisionComponent->OnComponentEndOverlap.AddDynamic(this,&AFireball::OnEndOverlap);
 }
 
 // Called when the game starts or when spawned
@@ -52,14 +54,18 @@ void AFireball::Tick(float DeltaTime)
 
 void AFireball::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 { 
+    UE_LOG(LogTemp,Log,TEXT("Overlap On"));
+
     ANonCharacterPlayer* Character = Cast<ANonCharacterPlayer>(OtherActor);
 
     if (nullptr != Character)
     {
+        Character->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
+        UE_LOG(LogTemp, Log, TEXT("Casting On"));
         UAnimInstance* AnimInstance = Character->GetMesh()->GetAnimInstance();
         AnimInstance->Montage_Play(Character->GetHittedMontage(), 1.0f);
 
-        UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ParticleSystem, SweepResult.ImpactPoint, SweepResult.ImpactNormal.Rotation());
+        UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ParticleSystem, OtherActor->GetActorLocation(), OtherActor->GetActorRotation());
     }
 
     if (OtherActor && OtherActor == Character)
@@ -75,6 +81,16 @@ void AFireball::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* Othe
         }
         FireballEffect->Deactivate();
         Destroy();
+    }
+}
+
+void AFireball::OnEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+    ANonCharacterPlayer* Character = Cast<ANonCharacterPlayer>(OtherActor);
+
+    if (nullptr != Character)
+    {
+        Character->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking); 
     }
 }
 

@@ -50,11 +50,6 @@ APlayerCharacter::APlayerCharacter()
 		WeaponMesh = WeaponMeshRef.Object;
 		Weapon->SetSkeletalMesh(WeaponMeshRef.Object);
 	}
-	static ConstructorHelpers::FObjectFinder<UAnimMontage> DeadMontageRef(TEXT("/Script/Engine.AnimMontage'/Game/BossBattle/Blueprint/Animation/AM_PlayerDead.AM_PlayerDead'"));
-	if (DeadMontageRef.Object)
-	{
-		DeadMontage = DeadMontageRef.Object;
-	}
 }
 
 void APlayerCharacter::BeginPlay()
@@ -127,6 +122,7 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Triggered, this, &APlayerCharacter::GASInputPressed, 1);
 	EnhancedInputComponent->BindAction(RollAction, ETriggerEvent::Triggered, this, &APlayerCharacter::GASInputPressed, 2);
 	EnhancedInputComponent->BindAction(SpellAction, ETriggerEvent::Triggered, this, &APlayerCharacter::GASInputPressed, 3);
+	EnhancedInputComponent->BindAction(SkillAction, ETriggerEvent::Triggered, this, &APlayerCharacter::GASInputPressed, 4);
 }
 
 void APlayerCharacter::GASInputPressed(int32 InputId)
@@ -179,6 +175,8 @@ void APlayerCharacter::SetDead()
 
 void APlayerCharacter::OnOutOfHealth()
 {
+	IsDead = true;
+
 	SetDead();
 }
 

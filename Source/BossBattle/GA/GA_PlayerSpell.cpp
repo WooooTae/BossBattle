@@ -36,11 +36,6 @@ void UGA_PlayerSpell::ActivateAbility(const FGameplayAbilitySpecHandle Handle, c
 		FRotator SpawnRotation = Target->GetActorRotation();
 
 		AFireball* Fireball = World->SpawnActor<AFireball>(AFireball::StaticClass(), SpawnLocation, SpawnRotation);
-		if (Fireball)
-		{
-			// 필요한 경우 추가 설정
-			//Fireball->Speed = 1200.0f; // 파이어볼 속도 설정
-		}
 	}
 
 	UAbilityTask_PlayMontageAndWait* PlayMontageTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("SpellMontage"), SpellActionMontage, 1.0f);

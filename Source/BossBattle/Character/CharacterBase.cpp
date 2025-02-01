@@ -9,6 +9,8 @@
 // Sets default values
 ACharacterBase::ACharacterBase()
 {
+	IsDead = false;
+
 	//Movement
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 500.0f, 0.0f);
@@ -38,15 +40,7 @@ void ACharacterBase::SetDead()
 {
 	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
 	SetActorEnableCollision(false);
-	GetMesh()->SetSimulatePhysics(false);
-	PlayDeadAnimation();
 }
 
-void ACharacterBase::PlayDeadAnimation()
-{
-	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
-	AnimInstance->StopAllMontages(0.0f);
-	AnimInstance->Montage_Play(DeadMontage, 1.0f);
-}
 
 
