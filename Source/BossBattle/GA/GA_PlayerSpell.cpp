@@ -6,6 +6,12 @@
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "BossBattle/Prop/Fireball.h"
+#include "AbilitySystemBlueprintLibrary.h"
+#include "AbilitySystemComponent.h"
+#include "GameplayEffect.h"
+#include "GameplayEffectExtension.h"
+#include "BossBattle/UI/CooldownWidget.h"
+#include "BossBattle/Player/MyPlayerController.h"
 
 UGA_PlayerSpell::UGA_PlayerSpell()
 {
@@ -15,6 +21,15 @@ UGA_PlayerSpell::UGA_PlayerSpell()
 void UGA_PlayerSpell::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
+
+	AMyPlayerController* PC = Cast<AMyPlayerController>(ActorInfo->PlayerController);
+
+	UCooldownWidget* MyCool = PC->CooldownWidget;
+
+	if (MyCool)
+	{
+		MyCool->UpdateCooldown(this);
+	}
 
 	APlayerCharacter* Target = Cast<APlayerCharacter>(ActorInfo->AvatarActor.Get());
 	if (!Target)
@@ -70,4 +85,32 @@ void UGA_PlayerSpell::OnInterruptedCallback()
 	bool bReplicatedEndAbility = true;
 	bool bWasCancelled = true;
 	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, bReplicatedEndAbility, bWasCancelled);
+}
+
+float UGA_PlayerSpell::GetCooldownTimeRemaining() const
+{
+	if (UAbilitySystemComponent* ASC = GetAbilitySystemComponentFromActorInfo())
+	{
+		const FGameplayTagContainer* CooldownTags = GetCooldownTags();
+		if (!CooldownTags)
+		{
+			return 0.0f;
+		}
+
+		TArray<FActiveGameplayEffectHandle> ActiveEffects = ASC->GetActiveEffects(FGameplayEffectQuery::MakeQuery_MatchAnyEffectTags(*CooldownTags));
+
+		float MaxTimeRemaining = 0.0f;
+
+		for (FActiveGameplayEffectHandle Handle : ActiveEffects)
+		{
+			const FActiveGameplayEffect* ActiveEffect = ASC->GetActiveGameplayEffect(Handle);
+			if (ActiveEffect)
+			{
+				float TimeRemaining = ActiveEffect->GetTimeRemaining(ASC->GetWorld()->GetTimeSeconds());
+				MaxTimeRemaining = FMath::Max(MaxTimeRemaining, TimeRemaining);
+			}
+		}
+		return MaxTimeRemaining;
+	}
+	return 0.0f;
 }

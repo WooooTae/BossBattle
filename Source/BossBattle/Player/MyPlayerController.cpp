@@ -4,6 +4,7 @@
 #include "MyPlayerController.h"
 #include "InputMappingContext.h"
 #include "BossBattle/UI/MyHPBarWidget.h"
+#include "BossBattle/UI/CooldownWidget.h"
 #include "BossBattle/Character/PlayerCharacter.h"
 #include "AbilitySystemComponent.h"
 
@@ -16,6 +17,14 @@ AMyPlayerController::AMyPlayerController()
 			HUDWidgetClass = HUDWidgetRef.Class; 
 		}
 	}
+
+	static ConstructorHelpers::FClassFinder<UUserWidget> CooldownWidgetRef(TEXT("/Game/BossBattle/Blueprint/UI/WBP_Cooldown.WBP_Cooldown_C"));
+	{
+		if (CooldownWidgetRef.Class)
+		{
+			CooldownWidgetClass = CooldownWidgetRef.Class;
+		}
+	}
 }
 
 void AMyPlayerController::BeginPlay()
@@ -26,9 +35,15 @@ void AMyPlayerController::BeginPlay()
 	SetInputMode(GameOnlyInputMode);
 
 	HUDWidget = CreateWidget<UMyHPBarWidget>(this, HUDWidgetClass);
+	CooldownWidget = CreateWidget<UCooldownWidget>(this, CooldownWidgetClass);
 	if (HUDWidget)
 	{
 		HUDWidget->AddToViewport();
+	}
+
+	if (CooldownWidget)
+	{
+		CooldownWidget->AddToViewport();
 	}
 
 	APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(GetPawn());

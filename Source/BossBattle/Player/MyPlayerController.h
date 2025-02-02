@@ -24,6 +24,11 @@ protected:
 protected:
 	TSubclassOf<class UUserWidget> HUDWidgetClass;
 
+	TSubclassOf<class UUserWidget> CooldownWidgetClass;
+
 public:
 	TObjectPtr<class UMyHPBarWidget> HUDWidget;
+
+public:
+	TObjectPtr<class UCooldownWidget> CooldownWidget;
 };

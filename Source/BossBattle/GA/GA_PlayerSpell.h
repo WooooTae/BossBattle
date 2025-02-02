@@ -4,13 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "Abilities/GameplayAbility.h"
+#include "BossBattle/Interface/CooldownInterface.h"
 #include "GA_PlayerSpell.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class BOSSBATTLE_API UGA_PlayerSpell : public UGameplayAbility
+class BOSSBATTLE_API UGA_PlayerSpell : public UGameplayAbility,public ICooldownInterface
 {
 	GENERATED_BODY()
 
@@ -31,4 +32,7 @@ protected:
 public:
 	UPROPERTY()
 	TObjectPtr<class UAnimMontage> SpellActionMontage;
+
+public:
+	virtual float GetCooldownTimeRemaining() const override;
 };
