@@ -5,15 +5,34 @@
 #include "BossBattle/Character/PlayerCharacter.h"
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "AbilitySystemBlueprintLibrary.h"
+#include "AbilitySystemComponent.h"
+#include "GameplayEffect.h"
+#include "GameplayEffectExtension.h"
+#include "BossBattle/UI/CooldownWidget.h"
+#include "BossBattle/Player/MyPlayerController.h"
 
 UGA_PlayerSkill::UGA_PlayerSkill()
 {
-
+	static ConstructorHelpers::FClassFinder<UGameplayEffect> CooldownClassRef(TEXT("/Game/BossBattle/Blueprint/GE/BPGE_Cooldown2.BPGE_Cooldown2_C"));
+	if (CooldownClassRef.Class)
+	{
+		CooldownGameplayEffectClass = CooldownClassRef.Class;
+	}
 }
 
 void UGA_PlayerSkill::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
+
+	AMyPlayerController* PC = Cast<AMyPlayerController>(ActorInfo->PlayerController);
+
+	UCooldownWidget* MyCool = PC->CooldownWidget2;
+
+	if (MyCool)
+	{
+		MyCool->UpdateCooldown(this);
+	}
 
 	APlayerCharacter* Target = Cast<APlayerCharacter>(ActorInfo->AvatarActor.Get());
 	if (!Target)

@@ -25,6 +25,14 @@ AMyPlayerController::AMyPlayerController()
 			CooldownWidgetClass = CooldownWidgetRef.Class;
 		}
 	}
+
+	static ConstructorHelpers::FClassFinder<UUserWidget> CooldownWidgetRef2(TEXT("/Game/BossBattle/Blueprint/UI/WBP_Cooldown2.WBP_Cooldown2_C"));
+	{
+		if (CooldownWidgetRef2.Class)
+		{
+			CooldownWidget2Class = CooldownWidgetRef2.Class;
+		}
+	}
 }
 
 void AMyPlayerController::BeginPlay()
@@ -36,6 +44,7 @@ void AMyPlayerController::BeginPlay()
 
 	HUDWidget = CreateWidget<UMyHPBarWidget>(this, HUDWidgetClass);
 	CooldownWidget = CreateWidget<UCooldownWidget>(this, CooldownWidgetClass);
+	CooldownWidget2 = CreateWidget<UCooldownWidget>(this, CooldownWidget2Class);
 	if (HUDWidget)
 	{
 		HUDWidget->AddToViewport();
@@ -44,6 +53,11 @@ void AMyPlayerController::BeginPlay()
 	if (CooldownWidget)
 	{
 		CooldownWidget->AddToViewport();
+	}
+
+	if (CooldownWidget2)
+	{
+		CooldownWidget2->AddToViewport();
 	}
 
 	APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(GetPawn());

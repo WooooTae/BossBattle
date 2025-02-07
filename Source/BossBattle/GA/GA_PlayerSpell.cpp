@@ -86,31 +86,3 @@ void UGA_PlayerSpell::OnInterruptedCallback()
 	bool bWasCancelled = true;
 	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, bReplicatedEndAbility, bWasCancelled);
 }
-
-float UGA_PlayerSpell::GetCooldownTimeRemaining() const
-{
-	if (UAbilitySystemComponent* ASC = GetAbilitySystemComponentFromActorInfo())
-	{
-		const FGameplayTagContainer* CooldownTags = GetCooldownTags();
-		if (!CooldownTags)
-		{
-			return 0.0f;
-		}
-
-		TArray<FActiveGameplayEffectHandle> ActiveEffects = ASC->GetActiveEffects(FGameplayEffectQuery::MakeQuery_MatchAnyEffectTags(*CooldownTags));
-
-		float MaxTimeRemaining = 0.0f;
-
-		for (FActiveGameplayEffectHandle Handle : ActiveEffects)
-		{
-			const FActiveGameplayEffect* ActiveEffect = ASC->GetActiveGameplayEffect(Handle);
-			if (ActiveEffect)
-			{
-				float TimeRemaining = ActiveEffect->GetTimeRemaining(ASC->GetWorld()->GetTimeSeconds());
-				MaxTimeRemaining = FMath::Max(MaxTimeRemaining, TimeRemaining);
-			}
-		}
-		return MaxTimeRemaining;
-	}
-	return 0.0f;
-}

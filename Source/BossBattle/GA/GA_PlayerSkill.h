@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Abilities/GameplayAbility.h"
+#include "BossBattle/Interface/CooldownInterface.h"
 #include "GA_PlayerSkill.generated.h"
 
 /**
