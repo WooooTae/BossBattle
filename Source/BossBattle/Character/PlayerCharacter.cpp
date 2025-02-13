@@ -17,6 +17,8 @@
 #include "BossBattle/UI/MyUserWidget.h"
 #include "BossBattle/UI/MyHPBarWidget.h"
 #include "BossBattle/UI/MyHUDWidget.h"
+#include "BossBattle/Game/MyGameModeBase.h"
+#include "Kismet/GameplayStatics.h"
 
 APlayerCharacter::APlayerCharacter()
 {
@@ -163,6 +165,11 @@ void APlayerCharacter::SetDead()
 	}
 
 	Super::SetDead();
+
+	if (AMyGameModeBase* GM = Cast<AMyGameModeBase>(GetWorld()->GetAuthGameMode()))
+	{
+		GM->BossGameOver();
+	}
 
 	FTimerHandle DeadTimerHandle;
 	GetWorld()->GetTimerManager().SetTimer(DeadTimerHandle,FTimerDelegate::CreateLambda(

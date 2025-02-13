@@ -60,6 +60,11 @@ void UGA_NPCSkill::OnCompleteCallback()
 
 void UGA_NPCSkill::OnInterruptedCallback()
 {
+	ANonCharacterPlayer* Target = Cast<ANonCharacterPlayer>(CurrentActorInfo->AvatarActor.Get());
+	if (Target)
+	{
+		Target->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
+	}
 	bool bReplicatedEndAbility = true;
 	bool bWasCancelled = true;
 	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, bReplicatedEndAbility, bWasCancelled);

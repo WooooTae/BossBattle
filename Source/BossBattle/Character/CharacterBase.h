@@ -35,7 +35,7 @@ public:
 protected:
 	virtual void SetDead();
 
-	float DeadEventDelayTime = 5.0f;
+	float DeadEventDelayTime = 3.0f;
 
 protected:
 	UPROPERTY(VisibleAnywhere,BluePrintReadOnly,Category=Equiqment,Meta=(AllowPrivateAccess))

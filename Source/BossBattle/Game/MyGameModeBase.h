@@ -18,4 +18,19 @@ public:
 	AMyGameModeBase();
 
 	virtual void StartPlay() override;
+
+	UFUNCTION()
+	void BossGameOver();
+
+	UFUNCTION()
+	void BossGameEnd();
+
+public:
+	TSubclassOf<class UUserWidget> GameOverClass;
+
+	TSubclassOf<class UUserWidget> GameEndClass;
+
+	UUserWidget* GameOverWidget;
+
+	UUserWidget* GameEndWidget;
 };

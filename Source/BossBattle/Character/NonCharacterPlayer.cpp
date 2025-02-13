@@ -12,6 +12,8 @@
 #include "BossBattle/UI/MyUserWidget.h"
 #include "BossBattle/Player/MyPlayerController.h"
 #include "Components/CapsuleComponent.h"
+#include "BossBattle/Game/MyGameModeBase.h"
+#include "Kismet/GameplayStatics.h"
 
 ANonCharacterPlayer::ANonCharacterPlayer()
 {
@@ -77,6 +79,11 @@ void ANonCharacterPlayer::PostInitializeComponents()
 void ANonCharacterPlayer::SetDead()
 {
    Super::SetDead();
+
+   if (AMyGameModeBase* GM = Cast<AMyGameModeBase>(GetWorld()->GetAuthGameMode()))
+   {
+	   GM->BossGameEnd();
+   }
 
    FTimerHandle DeadTimeHandle;
    GetWorld()->GetTimerManager().SetTimer(DeadTimeHandle, FTimerDelegate::CreateLambda(

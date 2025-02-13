@@ -7,7 +7,7 @@ UNPCSkillAttributeSet::UNPCSkillAttributeSet() :
 	SkillRange(500.0f),
 	MaxSkillRange(1200.0f),
 	SkillAttackRate(150.f),
-	MaxSkillAttackRate(300.0f),
+	MaxSkillAttackRate(30.0f),
 	SkillEnergy(100.0f),
 	MaxSkillEnergy(100.0f)
 {
